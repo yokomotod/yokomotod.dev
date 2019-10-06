@@ -5,9 +5,11 @@
   "scripts": {
     "develop": "gatsby develop",
     "start": "gatsby develop",
-    "build": "gatsby build"
+    "build": "gatsby build",
+    "deploy": "firebase deploy"
   },
   "dependencies": {
+    "firebase-tools": "^7.4.0",
     "gatsby": "^2.15.29",
     "gatsby-theme-blog": "^1.0.2",
     "react": "^16.10.2",
