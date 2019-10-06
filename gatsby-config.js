@@ -37,6 +37,8 @@ module.exports = {
     title: `yokomotod.dev`,
     author: `yokomotod`,
     description: `yokomotod's tech blog`,
+    url: `https://yokomotod.dev`,
+    image: `/icons/icon-512x512.png`,
     social: [
       {
         name: `twitter`,
