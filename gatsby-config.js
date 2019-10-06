@@ -31,13 +31,53 @@ module.exports = {
       },
     },
     `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-feed`,
+      options: {
+        feeds: [
+          {
+            serialize: ({ query: { site, allBlogPost } }) => {
+              return allBlogPost.edges.map(edge => {
+                return {
+                  title: edge.node.title,
+                  description: edge.node.excerpt,
+                  date: edge.node.date,
+                  url: site.siteMetadata.siteUrl + edge.node.slug,
+                  guid: site.siteMetadata.siteUrl + edge.node.slug,
+                  // custom_elements: [{ "content:encoded": edge.node.html }],
+                }
+              })
+            },
+            query: `
+              {
+                allBlogPost(
+                  sort: { order: DESC, fields: [date, title] },
+                ) {
+                  edges {
+                    node {
+                      id
+                      excerpt
+                      slug
+                      title
+                      date(formatString: "MMMM DD, YYYY")
+                    }
+                  }
+                }
+              }
+            `,
+            output: `/rss.xml`,
+            title: `yokomotod.dev RSS Feed`,
+          },
+        ],
+      },
+    },
   ],
   // Customize your site metadata:
   siteMetadata: {
     title: `yokomotod.dev`,
     author: `yokomotod`,
     description: `yokomotod's tech blog`,
-    url: `https://yokomotod.dev`,
+    siteUrl: `https://yokomotod.dev`,
     image: `/icons/icon-512x512.png`,
     social: [
       {
