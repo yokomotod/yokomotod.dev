@@ -1,7 +1,3 @@
-/**
- * from: https://github.com/gatsbyjs/gatsby/blob/master/themes/gatsby-theme-blog/src/components/seo.js
- */
-
 import React from "react"
 import PropTypes from "prop-types"
 import Helmet from "react-helmet"
