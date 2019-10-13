@@ -1,9 +1,16 @@
 import React from "react"
+import { HistoryLocation } from "@reach/router"
 import { useStaticQuery, graphql } from "gatsby"
 import { css } from "@emotion/core"
 import logo from "../images/tweet.svg"
+import BlogPost from "../types/blog-post"
 
-const Tweet = ({ post, location, ...props }) => {
+type Props = {
+  post: BlogPost
+  location: HistoryLocation
+}
+
+const Tweet: React.FC<Props> = ({ post, location, ...props }) => {
   const {
     site: {
       siteMetadata: { title, author },

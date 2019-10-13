@@ -1,6 +1,7 @@
 import React from "react"
-import { Styled, css } from "theme-ui"
-
+import { HistoryLocation } from "@reach/router"
+import { Styled } from "theme-ui"
+const { css } = require("theme-ui")
 import PostFooter from "gatsby-theme-blog/src/components/post-footer"
 import Layout from "gatsby-theme-blog/src/components/layout"
 import { MDXRenderer } from "gatsby-plugin-mdx"
@@ -8,8 +9,23 @@ import { MDXRenderer } from "gatsby-plugin-mdx"
 import SEO from "./seo"
 import Tweet from "../../components/tweet"
 import HatenaB from "../../components/hatena-b"
+import BlogPost from "../../types/blog-post"
 
-const Post = ({
+type Props = {
+  data: {
+    post: BlogPost
+    site: {
+      siteMetadata: {
+        title: string
+      }
+    }
+  },
+  location: HistoryLocation
+  previous: BlogPost
+  next: BlogPost
+}
+
+const Post: React.FC<Props> = ({
   data: {
     post,
     site: {

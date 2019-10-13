@@ -2,9 +2,13 @@ import React from "react"
 import { css } from "@emotion/core"
 import logo from "../images/hatena-b.svg"
 
-const HatenaB = props => (
+type Props = {
+  url: string;
+}
+
+const HatenaB: React.FC<Props> = ({ url, ...props }) => (
   <a
-    href={`https://b.hatena.ne.jp/my/add.confirm?url=${encodeURIComponent(props.url)}`}
+    href={`https://b.hatena.ne.jp/my/add.confirm?url=${encodeURIComponent(url)}`}
     target="_blank"
     rel="noopener noreferrer"
     css={css`
