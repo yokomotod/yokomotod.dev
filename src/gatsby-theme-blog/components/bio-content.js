@@ -12,6 +12,7 @@ export default () => {
           siteMetadata {
             author
             social {
+              name
               url
             }
           }
@@ -22,7 +23,25 @@ export default () => {
 
   return (
     <Fragment>
-      <Styled.a href={data.site.siteMetadata.social[0].url}>@{data.site.siteMetadata.author}</Styled.a>
+      <div>@{data.site.siteMetadata.author}</div>
+      <div>
+        {data.site.siteMetadata.social.map((platform, i, arr) => (
+          <Fragment key={platform.url}>
+            <Styled.a
+              href={platform.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {platform.name}
+            </Styled.a>
+            {arr.length - 1 !== i && (
+              <Fragment>
+                {` `}&bull;{` `}
+              </Fragment>
+            )}
+          </Fragment>
+        ))}
+      </div>
     </Fragment>
   )
 }
