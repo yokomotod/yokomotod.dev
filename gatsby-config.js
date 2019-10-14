@@ -18,6 +18,13 @@ module.exports = {
       },
     },
     {
+      resolve: "gatsby-plugin-sentry",
+      options: {
+        dsn: "https://4439f9ce5b7a481e8d953e9feba3a07e@sentry.io/1778417",
+        enabled: process.env.NODE_ENV === "production"
+      }
+    },
+    {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `yokomotod.dev`,
