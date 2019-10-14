@@ -1,7 +1,8 @@
 import React from "react"
 import { useColorMode } from "theme-ui"
-const { css } = require("theme-ui")
 import defaultThemeColors from "gatsby-theme-blog/src/gatsby-plugin-theme-ui/colors"
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { css } = require("theme-ui")
 
 const Footer: React.FC = () => {
   const [colorMode] = useColorMode()

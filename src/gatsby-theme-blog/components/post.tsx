@@ -1,15 +1,15 @@
 import React from "react"
 import { HistoryLocation } from "@reach/router"
 import { Styled } from "theme-ui"
-const { css } = require("theme-ui")
 import PostFooter from "gatsby-theme-blog/src/components/post-footer"
 import Layout from "gatsby-theme-blog/src/components/layout"
 import { MDXRenderer } from "gatsby-plugin-mdx"
-
 import SEO from "./seo"
 import Tweet from "../../components/tweet"
 import HatenaB from "../../components/hatena-b"
 import BlogPost from "../../types/blog-post"
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { css } = require("theme-ui")
 
 type Props = {
   data: {
@@ -19,7 +19,7 @@ type Props = {
         title: string
       }
     }
-  },
+  }
   location: HistoryLocation
   previous: BlogPost
   next: BlogPost
@@ -29,9 +29,7 @@ const Post: React.FC<Props> = ({
   data: {
     post,
     site: {
-      siteMetadata: {
-        title
-      },
+      siteMetadata: { title },
     },
   },
   location,

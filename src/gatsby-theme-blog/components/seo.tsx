@@ -6,6 +6,7 @@ import { useStaticQuery, graphql } from "gatsby"
 type Props = {
   description?: string
   lang?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta?: any[]
   keywords?: (string | null | undefined)[]
   title: string

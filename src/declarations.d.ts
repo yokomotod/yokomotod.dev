@@ -23,7 +23,7 @@ declare module "gatsby-theme-blog/src/gatsby-plugin-theme-ui/colors" {
       property: string
       namespace: string
       highlight: string
-    },
+    }
     modes: {
       dark: {
         text: string
@@ -33,10 +33,10 @@ declare module "gatsby-theme-blog/src/gatsby-plugin-theme-ui/colors" {
         muted: string
         highlight: string
         heading: string
-      },
-    },
+      }
+    }
   }
-  export default colors;
+  export default colors
 }
 
 declare module "gatsby-theme-blog/src/components/layout" {
