@@ -19,7 +19,7 @@
     "gatsby-plugin-offline": "^3.0.14",
     "gatsby-plugin-sentry": "^1.0.1",
     "gatsby-plugin-typescript": "^2.1.12",
-    "gatsby-theme-blog": "^1.2.1",
+    "gatsby-theme-blog": "^1.1.28",
     "react": "^16.10.2",
     "react-dom": "^16.10.2"
   },
