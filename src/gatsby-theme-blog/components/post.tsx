@@ -8,8 +8,8 @@ import SEO from "./seo"
 import Tweet from "../../components/tweet"
 import HatenaB from "../../components/hatena-b"
 import BlogPost from "../../types/blog-post"
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { css } = require("theme-ui")
+import { Link } from "gatsby"
+import { css } from "@styled-system/css"
 
 type Props = {
   data: {
@@ -62,6 +62,16 @@ const Post: React.FC<Props> = ({
         })}
       >
         {post.date}
+        {post.tags.map(tag => (
+          <Styled.a
+            as={Link}
+            /*
+            // @ts-ignore  */
+            to={`tags/${tag}`}
+          >
+            {tag}
+          </Styled.a>
+        ))}
       </Styled.p>
       <MDXRenderer>{post.body}</MDXRenderer>
     </main>
