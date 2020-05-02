@@ -1,0 +1,499 @@
+---
+title: gcp-iam-viewer 開発メモ
+date: 2020-01-01
+---
+
+目標
+
+- IAM Roleの一覧取得
+- IAM Permissionの一覧取得
+- Role×Permissionのマトリクスをいい感じに見れる
+- RoleとRoleのdiffを取れる
+- 複数Roleのdiffを取れる
+- APIエンドポイントに必要なPermission一覧取得
+- Permission×Endpointのマトリクスをいい感じに見れる
+
+- Service Accountのterraform化
+---
+
+https://github.com/googleapis/google-cloud-go
+と
+https://github.com/googleapis/google-api-go-client
+があるの何？
+
+A. (APIじゃない)Cloud Client Libraryの方が高級らしい
+
+https://cloud.google.com/apis/docs/client-libraries-explained
+
+---
+
+パーミッションの一覧あった
+
+https://cloud.google.com/iam/docs/permissions-reference
+
+2574個
+
+---
+
+CustomRoleサポートレベルという概念を見つけた
+
+https://cloud.google.com/iam/docs/custom-roles-permissions-support
+
+
+2545個
+
+全パーミッション網羅していない？
+
+---
+
+```
+$ cat result.json | jq -r 'map(.includedPermissions) | flatten | .[]' | LANG=C sort -u | wc -l
+
+2601
+```
+
+そしてドキュメントよりもRoleから抽出されたパーミッションの方が多い
+
+
+---
+
+```
+342d341
+< bigtable.tables.getIamPolicy
+347d345
+< bigtable.tables.setIamPolicy
+933a932
+> compute.instances.update
+1008d1006
+< compute.nodeGroups.update
+1493d1490
+< datacatalog.entries.list
+1496d1492
+< datacatalog.entries.updateTag
+1502d1497
+< datacatalog.entryGroups.update
+1570,1577d1564
+< dataproc.autoscalingPolicies.create
+< dataproc.autoscalingPolicies.delete
+< dataproc.autoscalingPolicies.get
+< dataproc.autoscalingPolicies.getIamPolicy
+< dataproc.autoscalingPolicies.list
+< dataproc.autoscalingPolicies.setIamPolicy
+< dataproc.autoscalingPolicies.update
+< dataproc.autoscalingPolicies.use
+2052,2053d2038
+< logging.cmekSettings.get
+< logging.cmekSettings.update
+2185,2196d2169
+< networkmanagement.connectivitytests.create
+< networkmanagement.connectivitytests.delete
+< networkmanagement.connectivitytests.get
+< networkmanagement.connectivitytests.getIamPolicy
+< networkmanagement.connectivitytests.list
+< networkmanagement.connectivitytests.rerun
+< networkmanagement.connectivitytests.setIamPolicy
+< networkmanagement.connectivitytests.update
+< networkmanagement.locations.get
+< networkmanagement.locations.list
+< networkmanagement.operations.get
+< networkmanagement.operations.list
+```
+
+`compute.instances.update` がroleから抽出出来てないけど、どうやらそんなパーミッションは無い（なくなった？）
+
+
+---
+
+IAMのロゴ無いかな
+
+あった
+
+https://cloud.google.com/icons/
+
+`SVG and PNG Icons` にバッチリ正方形背景透過が
+
+---
+
+material-uiでAppBarがかぶる問題の解決は `theme.mixins.toolbar`
+
+https://github.com/mui-org/material-ui/blob/master/docs/src/pages/getting-started/templates/dashboard/Dashboard.js
+
+https://stackoverflow.com/questions/52955097/what-is-the-correct-way-to-position-the-main-content-around-appbars-and-drawers
+
+---
+
+Routerまわり
+
+https://reacttraining.com/blog/reach-react-router-future/
+
+https://reacttraining.com/blog/react-router-v5-1/
+
+いまのところreach-routerがreact-router v6の先取りっぽい
+
+が、 TypeScriptのサポートが微妙
+
+https://github.com/reach/router/issues/141
+https://github.com/reach/router/blob/master/website/src/markdown/pages/typescript.md
+
+---
+
+Reactのパフォーマンスチューニング調べる
+
+https://medium.com/@esamatti/react-js-pure-render-performance-anti-pattern-fb88c101332f
+
+---
+
+勉強会で聞いた React.memoの話
+
+```
+const Button = React.memo((props) => {
+  // your component
+});
+```
+
+https://ja.reactjs.org/docs/hooks-faq.html#how-do-i-implement-shouldcomponentupdate
+
+---
+
+useCallbackとuseMemoの違いってなんだ？
+
+普通に返り値が違った。関数そのままか、関数の返り値か
+
+Since JavaScript has first-class functions, useCallback(fn, deps) is equivalent to useMemo(() => fn, deps).
+
+https://medium.com/@jan.hesters/usecallback-vs-usememo-c23ad1dc60
+
+---
+
+Updateがかかってるかどうか知りたい
+
+React Developer Tools の設定に Highlight Update あった
+
+https://recruit-tech.co.jp/blog/2018/09/19/react_spa_performance_tuning/
+
+---
+
+単なるオブジェクトリテラル定数にuseMemo使うのか？
+
+JSX外で定義しろ。そりゃそうだ
+
+https://gist.github.com/jacob-beltran/7777a477942cbb2c9db65a1e3c312e88
+
+---
+
+ESLintは
+
+eslint-config-react の no-bind でアロー関数作って渡すのは検知できる
+
+でもrecommendedでもeslint-config-react-appでも有効にはされてない
+
+関数、オブジェクトリテラル、配列リテラル、全部チェックしてくれるやつ
+https://github.com/cvazac/eslint-plugin-react-perf
+（でもマイナー？）
+
+---
+
+丁寧にやってみたけど、そもそもmaterial-uiのAutocompleteがPure化されてないから結局常時Updateされとる
+
+---
+
+常にPure化すればいいわけじゃない
+
+https://twitter.com/dan_abramov/status/759383530120110080
+
+そのとおり。
+
+とりあえず全部戻した
+
+---
+
+for-ofでarray.entries()使うとエラー
+
+```
+Type 'IterableIterator<[number, string]>' is not an array type or a string type. Use compiler option '--downlevelIteration' to allow iterating of iterators.  TS2569
+```
+
+---
+
+長いTableをレンダリングしようとすると遅い
+
+https://material-ui.com/ja/components/tables/#virtualized-table
+
+`raect-virtualized` を使ったサンプルがドキュメントに
+
+https://github.com/bvaughn/react-virtualized#a-word-about-react-window
+
+でも `react-window` の方がオススメ感ある
+
+https://react-window.now.sh/#/examples/list/fixed-size
+
+https://github.com/bvaughn/react-window/issues/230
+
+別に普通に `react-window` でもやれるっぽい
+
+いったん諦めた。
+
+Ctrl-F で検索できなくなるし
+
+---
+
+react-router スクロール問題
+
+画面遷移後に前の位置のままなのは解決できる
+
+https://reacttraining.com/react-router/web/guides/scroll-restoration
+
+でも出来ればブラウザバックしたときは前居たときの位置に戻りたい
+
+https://developer.mozilla.org/en-US/docs/Web/API/History/scrollRestoration
+
+ネイティブでサポートされはじめている
+
+ライブラリがある
+が、v4対応の方はPopularityがイマイチ
+https://www.npmjs.com/package/react-router-scroll-4
+
+```
+const ScrollToTop: React.FC = () => {
+  const history = useHistory()
+
+  React.useEffect(() => {
+    if (history.action === "PUSH") {
+      window.scrollTo(0, 0);
+    }
+  }, [history.location.pathname, history.action]);
+
+  return null;
+}
+```
+
+でいいのでは？？
+遷移したときだけリセット、ブラウザバック・フォワードだと維持
+
+---
+
+`eslint-config-react-app` の `.ts` へのoverridesが、
+自分で定義した `plugins` を上書きしている感
+
+
+package.json : `"extends": "plugin:prettier/recommended"`
+packages/web/package.json : `"extends": ["react-app", "prettier/@typescript-eslint"]`
+
+という状況で、rootで指定した `plugin:prettier/recommended` が認識されてないように見える
+
+
+packages/batch/package.json : `"extends": "eslint:recommended"`
+
+としてる方は問題ない
+
+わかった
+
+config-react-app で `root: true` が指定してあるからだ・・・
+
+eslint-configパッケージの方で root: true 指定してくるのって一般的なのか・・・？
+
+もしそうならmonorepoとかでネストしたeslistコンフィグ書くときはサブディレクトリでは root: false を明記すべきなのかとかって気になってくるけど
+
+---
+
+`plugin:@typescript-eslint/recommended-requiring-type-checking`
+
+https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/TYPED_LINTING.md
+
+monorepoの場合、ルートで `tsconfigRootDir` 以外まで設定して、子パッケージの `.eslintrc.js` で `tsconfigRootDir: __dirname`
+
+---
+
+`@typescript-eslint/prefer-regexp-exec`
+
+ESLint本体でリジェクトされたルールがtypescript-eslintで採用されて、しかもrecommended入りしている・・・
+
+https://github.com/typescript-eslint/typescript-eslint/issues/283
+https://github.com/eslint/eslint/issues/3477
+
+typescript-eslint、JSレイヤのルールには関与せずTSでだけ架せれるルールだけ扱う、的なポリシーは特に無い感じなんだろうか
+
+
+---
+
+いまさらだけどcss propsって、なんでstyle属性をそのまま使うのよりいいんだ？
+
+https://reactjs.org/docs/dom-elements.html#style
+
+> but using the style attribute as the primary means of styling elements is generally not recommended.
+
+非推奨だった
+
+でもなんで？
+
+https://reactjs.org/docs/faq-styling.html#are-inline-styles-bad
+
+> ### Are inline styles bad?
+> CSS classes are generally better for performance than inline styles.
+
+パフォーマンスが悪い？
+
+ループで何回も描画とかならわかるけど、一箇所でだけ描画されるような要素なら違いなさそうだけど何回使われるかわからない想定でいろということ？
+
+
+---
+
+GitHubのアイコン
+
+これのためだけにFontAwesome入れるのは違うと思うのでSVGだけ取ってきたい
+
+公式には.aiと.epsだけで、svgに変換してみたらなんか４種類の画像入りなファイルだった・・・
+
+https://simpleicons.org/
+
+から取得
+
+---
+
+SVGに色をつけたい
+
+そもそもちゃんと理解してなかったけど、 `fill` はインラインSVGにしか使えない模様
+
+で、
+
+```
+import example from "./example.svg"
+```
+
+じゃなく
+
+```
+import { ReactComponent as Example } from "./example.svg"
+```
+
+でインライン展開されるReactComponentが取得できた・・・
+
+こういうのをSVGRっていうのね
+
+https://github.com/gregberge/svgr
+
+---
+
+svgを囲むaタグの高さがsvgのサイズに一致しない
+
+svg: 24
+a: 16
+
+aタグをdisplay: blockにしても
+
+a: 29
+
+svgもdisplay: blockにしたらOKだった
+
+なるほど
+
+
+---
+
+GAの「業種」設定って目標のテンプレートに影響するだけだったのか
+
+---
+
+Firebase Analyticsをローカルで止める方法
+
+とりあえずCreateReactAppのserviceWorkerで使ってるのとおなじ `isLocal`関数コピペして防いでおいた
+
+---
+
+https://support.google.com/analytics/answer/9216061
+
+測定機能の強化、はFirebase Analyticsだとどうやるんだ
+
+データストリームの設定は「Firebase のストリーム設定」となっていて操作できない
+
+
+https://github.com/firebase/firebase-js-sdk/tree/master/packages/analytics
+
+https://github.com/firebase/firebase-js-sdk
+
+ソース公開されてるのか
+
+たぶん出来ない感
+
+Webの場合、Firebase側のトラッキング方法は無視して連携されたGAを直接使ったほうがいいのでは・・・？
+
+そうする
+
+---
+
+OGP対応
+
+実行時のmetaタグの操作はreact-helmet
+
+でも配信時には影響しないのでTwitterCardには効果がない
+
+https://prerender.io/
+
+https://docs.netlify.com/site-deploys/post-processing/prerendering/
+
+それ用のサービスやNetlifyを使うという手
+
+https://create-react-app.dev/docs/pre-rendering-into-static-html-files/
+> Pre-Rendering into Static HTML Files
+
+https://medium.com/superhighfives/an-almost-static-stack-6df0a2791319
+
+CRAのページからのリンク
+
+https://www.npmjs.com/package/react-snapshot
+
+weekly: 4,129
+dependents: 9
+
+https://www.npmjs.com/package/react-snap
+
+> Heavily inspired by prep and react-snapshot, but written from scratch.
+
+weekyly: 7,162
+dependents: 17
+
+react-snapshotに載ってるAlternatives
+
+https://www.npmjs.com/package/static-site-generator-webpack-plugin
+
+weekly: 27,382 (gatsbyの影響だろう)
+
+https://github.com/stereobooster/react-snap/blob/HEAD/doc/alternatives.md
+
+いいまとめ
+
+https://www.npmjs.com/package/prerender-spa-plugin
+
+weekly: 7,433
+
+https://www.npmtrends.com/react-snap-vs-react-snapshot
+
+---
+
+metaタグがreact-helmetで変更されない
+
+`<meta property="og:title" content="Compare : GCP IAM Explorer">`
+
+のまま
+
+`<meta property="og:title" content="Compare : GCP IAM Explorer" data-react-helmet="true">` がheadの末尾に追加されてた
+
+`data-react-helmet="true"` がついてないものには触らない模様
+
+prerenderingするのでindex.htmlから消してしまえば良い
+
+`data-react-helmet="true"` をつければindex.htmlに書いたやつを拾ってくれはしそう
+
+---
+
+firebase hostingで末尾スラッシュ無しに統一したい
+
+https://firebase.google.com/docs/hosting/full-config#control_trailing_slashes
+
+`"trailingSlash": false`
+
+---
+
+firebase hostingで404を返す
+
+react-snapでprerenderingしているので初期化時にSPA用としてセットアップして作られたrewriteルールを消せばOK
